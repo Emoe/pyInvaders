@@ -1,5 +1,6 @@
 import turtle
 import os 
+import math
 
 window = turtle.Screen()
 window.bgcolor("black")
@@ -16,6 +17,39 @@ for side in range(4):
 	border.fd(600)
 	border.lt(90)
 border.hideturtle()
+
+# Title-Screen
+titleScrenn ="""
+--- PyInvaders ---
+"""
+title = turtle.Turtle()
+title.speed(0)
+title.color("blue")
+title.penup()
+title.setposition(-175,280)
+title.pendown()
+title.hideturtle()
+title.write(titleScrenn,font=("Arial", 32, "bold"))
+
+# Points
+gamepoints = 0
+points = turtle.Turtle()
+points.speed(0)
+points.color("blue")
+points.penup()
+points.setposition(200,-350)
+points.pendown()
+points.hideturtle()
+points.write("Points: " + str(gamepoints), font=("Arial", 16, "normal"))
+
+# Game Over
+gameover = turtle.Turtle()
+gameover.speed(0)
+gameover.color("red")
+gameover.penup()
+gameover.setposition(-300,-350)
+gameover.pendown()
+gameover.hideturtle()
 
 # Create player turtle
 player = turtle.Turtle()
@@ -74,7 +108,12 @@ def fire_bullet():
 		bullet.showturtle()
 		bulletstate = "fired"
 
-
+def isCollision(t1,t2):
+	distance = math.sqrt(math.pow(t1.xcor() - t2.xcor(),2) + math.pow(t1.ycor() - t2.ycor(),2))
+	if distance <= 15:
+		return True
+	else:
+		return False
 
 
 turtle.listen()
@@ -105,4 +144,19 @@ while True:
 	if bullet.ycor()+bulletspeed > 275:
 		bullet.hideturtle()
 		bulletstate = "ready"
+
+	if isCollision(bullet,enemy):
+		bullet.hideturtle()
+		bullet.setposition(0,-400)
+		bulletstate= "ready"
+		enemy.setposition(-200,250)
+		gamepoints += 1
+		points.clear()
+		points.write("Points: " + str(gamepoints), font=("Arial", 16, "normal"))
+		
+
+	if isCollision(enemy,player):
+		player.hideturtle()
+		gameover.write("Game Over", font=("Arial", 16, "normal"))
+
 
