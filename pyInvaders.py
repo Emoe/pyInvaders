@@ -1,6 +1,7 @@
 import turtle
 import os 
 import math
+import random
 
 window = turtle.Screen()
 window.bgcolor("black")
@@ -62,16 +63,27 @@ player.setheading(90)
 
 playerspeed = 15
 
-# Create Invaders
-enemy = turtle.Turtle()
-enemy.color("red")
-enemy.shape("circle")
-enemy.penup()
-enemy.speed(0)
-enemy.setposition(-200,250)
-
 enemyspeed = 2
 enemydrop = 20
+
+# Choose Number of Enemies
+number_of_Enemies = 5
+enemies = []
+
+# add enemies to the list
+
+for i in range(number_of_Enemies):
+	enemies.append(turtle.Turtle())
+
+for enemy in enemies:
+	enemy.color("red")
+	enemy.shape("circle")
+	enemy.penup()
+	enemy.speed(0)
+	x = random.randint(-200,200)
+	y = random.randint(100,250)
+	enemy.setposition(x,y)	
+
 
 # create Weapon
 bullet = turtle.Turtle()
@@ -125,16 +137,34 @@ turtle.onkey(fire_bullet,"space")
 # Main game Loop
 while True:
 	# Move the Enemy
-	enemy.setx(enemy.xcor()+enemyspeed)
+	for enemy in enemies:
+		enemy.setx(enemy.xcor()+enemyspeed)
 
 	# Move Enemy back 
-	if enemy.xcor()+enemyspeed > 280:
-		enemyspeed *= -1
-		enemy.sety(enemy.ycor() - enemydrop)
 	
-	if enemy.xcor()+enemyspeed < -280:
-		enemyspeed *= -1
-		enemy.sety(enemy.ycor() - enemydrop)
+		if enemy.xcor()+enemyspeed > 280:
+			enemyspeed *= -1
+			enemy.sety(enemy.ycor() - enemydrop)
+		
+		if enemy.xcor()+enemyspeed < -280:
+			enemyspeed *= -1
+			enemy.sety(enemy.ycor() - enemydrop)
+
+		if isCollision(bullet,enemy):
+			bullet.hideturtle()
+			bullet.setposition(0,-400)
+			bulletstate= "ready"
+			x = random.randint(-200,200)
+			y = random.randint(100,250)
+			enemy.setposition(x,y)	
+			gamepoints += 1
+			points.clear()
+			points.write("Points: " + str(gamepoints), font=("Arial", 16, "normal"))
+
+		if isCollision(enemy,player):
+			player.hideturtle()
+			gameover.write("Game Over", font=("Arial", 16, "normal"))
+			
 
 	# Move the bullet
 	if bulletstate == "fired":
@@ -144,19 +174,6 @@ while True:
 	if bullet.ycor()+bulletspeed > 275:
 		bullet.hideturtle()
 		bulletstate = "ready"
-
-	if isCollision(bullet,enemy):
-		bullet.hideturtle()
-		bullet.setposition(0,-400)
-		bulletstate= "ready"
-		enemy.setposition(-200,250)
-		gamepoints += 1
-		points.clear()
-		points.write("Points: " + str(gamepoints), font=("Arial", 16, "normal"))
 		
-
-	if isCollision(enemy,player):
-		player.hideturtle()
-		gameover.write("Game Over", font=("Arial", 16, "normal"))
 
 
